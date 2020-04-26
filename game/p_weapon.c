@@ -660,6 +660,21 @@ void Weapon_Blaster_Fire(edict_t *ent)
 	ent->client->ps.gunframe++;
 }
 
+//Battle Rifle
+void Weapon_BR_Fire(edict_t *ent)
+{
+	int		damage;
+
+	if (deathmatch->value)
+		damage = 15;
+	else
+		damage = 15;
+	Blaster_Fire(ent, vec3_origin, damage, false, EF_BLASTER);
+	ent->client->ps.gunframe++;
+
+	ent->client->pers.inventory[ent->client->ammo_index]--;
+}
+
 /*-------------------------------------------------------------------------------------------*/
 //HyperBlaster
 void Weapon_HyperBlaster_Fire(edict_t *ent)
@@ -1493,12 +1508,12 @@ void Weapon_Machinegun (edict_t *ent) //Machine gun to Needler
 
 
 
-void Weapon_Chaingun (edict_t *ent)
+void Weapon_Chaingun (edict_t *ent) //Chaingun to Battle Rifle
 {
-	static int	pause_frames[]	= {38, 43, 51, 61, 0};
-	static int	fire_frames[]	= {5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 0};
+	static int	pause_frames[]	= {24, 29, 37, 47, 0};
+	static int	fire_frames[]	= {5, 6, 7, 0}; //5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 0
 
-	Weapon_Generic (ent, 4, 31, 61, 64, pause_frames, fire_frames, Chaingun_Fire);
+	Weapon_Generic (ent, 4, 19, 47, 50, pause_frames, fire_frames, Weapon_BR_Fire);
 }
 
 
