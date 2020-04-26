@@ -1476,12 +1476,12 @@ void Weapon_Blaster (edict_t *ent)
 
 
 
-void Weapon_HyperBlaster (edict_t *ent)
+void Weapon_HyperBlaster (edict_t *ent) //Hyper Blaster to DMR
 {
 	static int	pause_frames[]	= {0};
-	static int	fire_frames[]	= {6, 7, 8, 9, 10, 11, 0};
+	static int	fire_frames[]	= {6, 0}; //6, 7, 8, 9, 10, 11, 0
 
-	Weapon_Generic (ent, 5, 20, 49, 53, pause_frames, fire_frames, Weapon_HyperBlaster_Fire);
+	Weapon_Generic (ent, 5, 10, 11, 15, pause_frames, fire_frames, Weapon_BR_Fire); //5, 20, 49, 53
 }
 
 /*
