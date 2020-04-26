@@ -575,6 +575,48 @@ void Weapon_RocketLauncher_Fire(edict_t *ent)
 }
 
 /*-------------------------------------------------------------------------------------------*/
+//Fuel rod Cannon
+void Weapon_FuelRodCannon_Fire(edict_t *ent)
+{
+	vec3_t	offset, start;
+	vec3_t	forward, right;
+	int		damage;
+	float	damage_radius;
+	int		radius_damage;
+
+	damage = 30 + (int)(random() * 20.0);
+	radius_damage = 50;
+	damage_radius = 50;
+	if (is_quad)
+	{
+		damage *= 4;
+		radius_damage *= 4;
+	}
+
+	AngleVectors(ent->client->v_angle, forward, right, NULL);
+
+	VectorScale(forward, -2, ent->client->kick_origin);
+	ent->client->kick_angles[0] = -1;
+
+	VectorSet(offset, 8, 8, ent->viewheight - 8);
+	P_ProjectSource(ent->client, ent->s.origin, offset, forward, right, start);
+	fire_rocket(ent, start, forward, damage, 200, damage_radius, radius_damage);
+
+	// send muzzle flash
+	gi.WriteByte(svc_muzzleflash);
+	gi.WriteShort(ent - g_edicts);
+	gi.WriteByte(MZ_ROCKET | is_silenced);
+	gi.multicast(ent->s.origin, MULTICAST_PVS);
+
+	ent->client->ps.gunframe++;
+
+	PlayerNoise(ent, start, PNOISE_WEAPON);
+
+	if (!((int)dmflags->value & DF_INFINITE_AMMO))
+		ent->client->pers.inventory[ent->client->ammo_index]--;
+}
+
+/*-------------------------------------------------------------------------------------------*/
 //Blaster
 void Blaster_Fire(edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, int effect)
 {
@@ -659,6 +701,7 @@ void Weapon_HyperBlaster_Fire(edict_t *ent)
 				damage = 15;
 			else
 				damage = 20;
+			gi.cprintf(ent, PRINT_HIGH, "THE SEX GUN\nSex\n");
 			Blaster_Fire(ent, offset, damage, true, effect);
 			if (!((int)dmflags->value & DF_INFINITE_AMMO))
 				ent->client->pers.inventory[ent->client->ammo_index]--;
@@ -1377,7 +1420,7 @@ void Weapon_GrenadeLauncher (edict_t *ent)
 	static int	pause_frames[]	= {34, 51, 59, 0};
 	static int	fire_frames[]	= {6, 0};
 
-	Weapon_Generic (ent, 5, 16, 59, 64, pause_frames, fire_frames, weapon_grenadelauncher_fire);
+	Weapon_Generic (ent, 5, 16, 59, 64, pause_frames, fire_frames, Weapon_FuelRodCannon_Fire);
 }
 
 /*
@@ -1474,10 +1517,10 @@ void Weapon_Shotgun (edict_t *ent) //Shotgun to Needler rifle (?)
 	static int	fire_frames[]	= {9, 0};
 
 	if (ent->client->pers.inventory[ent->client->ammo_index] % 3 == 0){
-		Weapon_Generic(ent, 7, 18, 19, 24, pause_frames, fire_frames, Weapon_RocketLauncher_Fire); //36, 39
+		Weapon_Generic(ent, 7, 18, 24, 25, pause_frames, fire_frames, Weapon_RocketLauncher_Fire); //36, 39
 	}
 	else{
-		Weapon_Generic(ent, 7, 18, 19, 24, pause_frames, fire_frames, weapon_railgun_fire);
+		Weapon_Generic(ent, 7, 18, 24, 25, pause_frames, fire_frames, weapon_railgun_fire);
 	}
 }
 
@@ -1525,9 +1568,10 @@ BFG10K
 void Weapon_BFG (edict_t *ent)
 {
 	static int	pause_frames[]	= {39, 45, 50, 55, 0};
-	static int	fire_frames[]	= {9, 17, 0};
+	static int	fire_frames[]	= {35, 0};//9, 17, 0
 
-	Weapon_Generic (ent, 8, 32, 55, 58, pause_frames, fire_frames, weapon_spartanlaser_fire);
+	//Weapon_Generic (ent, 8, 32, 55, 58, pause_frames, fire_frames, weapon_spartanlaser_fire);
+	Weapon_Generic(ent, 8, 36, 55, 58, pause_frames, fire_frames, weapon_railgun_fire);
 }
 
 
