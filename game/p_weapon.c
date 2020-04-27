@@ -661,6 +661,37 @@ void Weapon_Blaster_Fire(edict_t *ent)
 }
 
 //Battle Rifle
+void BR_Fire(edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, int effect)
+{
+	vec3_t	forward, right;
+	vec3_t	start;
+	vec3_t	offset;
+
+	if (is_quad)
+		damage *= 4;
+	AngleVectors(ent->client->v_angle, forward, right, NULL);
+	VectorSet(offset, 24, 8, ent->viewheight - 8);
+	VectorAdd(offset, g_offset, offset);
+	P_ProjectSource(ent->client, ent->s.origin, offset, forward, right, start);
+
+	VectorScale(forward, -2, ent->client->kick_origin);
+	ent->client->kick_angles[0] = -1;
+
+	fire_blaster(ent, start, forward, damage, 2000, effect, hyper);
+
+	// send muzzle flash
+	gi.WriteByte(svc_muzzleflash);
+	gi.WriteShort(ent - g_edicts);
+	if (hyper)
+		gi.WriteByte(MZ_HYPERBLASTER | is_silenced);
+	else
+		gi.WriteByte(MZ_BLASTER | is_silenced);
+	gi.multicast(ent->s.origin, MULTICAST_PVS);
+
+	PlayerNoise(ent, start, PNOISE_WEAPON);
+}
+
+
 void Weapon_BR_Fire(edict_t *ent)
 {
 	int		damage;
@@ -669,7 +700,29 @@ void Weapon_BR_Fire(edict_t *ent)
 		damage = 15;
 	else
 		damage = 15;
-	Blaster_Fire(ent, vec3_origin, damage, false, EF_BLASTER);
+
+	//Abort if not enough ammo. BR needs atleast 3 bullets to fire.
+	if (ent->client->pers.inventory[ent->client->ammo_index] < 3){
+		ent->client->ps.gunframe++;
+		return;
+	}
+
+	BR_Fire(ent, vec3_origin, damage, false, EF_BLASTER);
+	ent->client->ps.gunframe++;
+
+	ent->client->pers.inventory[ent->client->ammo_index]--;
+}
+
+//DMR Fire
+void Weapon_DMR_Fire(edict_t *ent)
+{
+	int		damage;
+
+	if (deathmatch->value)
+		damage = 15;
+	else
+		damage = 15;
+	BR_Fire(ent, vec3_origin, damage, false, EF_BLASTER);
 	ent->client->ps.gunframe++;
 
 	ent->client->pers.inventory[ent->client->ammo_index]--;
@@ -1101,6 +1154,55 @@ void weapon_railgun_fire(edict_t *ent)
 }
 
 /*-------------------------------------------------------------------------------------------*/
+//HALO Railgun
+void Weapon_HALORailgun_Fire(edict_t *ent)
+{
+	vec3_t	offset, start;
+	vec3_t	forward, right;
+	int		damage;
+	float	damage_radius;
+	int		radius_damage;
+
+	damage = 120;
+	radius_damage = 80;
+	damage_radius = 80;
+	if (is_quad)
+	{
+		damage *= 4;
+		radius_damage *= 4;
+	}
+
+	//Abort if not enough ammo
+	if (ent->client->pers.inventory[ent->client->ammo_index] < 12){
+		ent->client->ps.gunframe++;
+		return;
+	}
+
+	AngleVectors(ent->client->v_angle, forward, right, NULL);
+
+	VectorScale(forward, -2, ent->client->kick_origin);
+	ent->client->kick_angles[0] = -1;
+
+	VectorSet(offset, 8, 8, ent->viewheight - 8);
+	P_ProjectSource(ent->client, ent->s.origin, offset, forward, right, start);
+	fire_rocket(ent, start, forward, damage, 2000, damage_radius, radius_damage);
+
+	// send muzzle flash
+	gi.WriteByte(svc_muzzleflash);
+	gi.WriteShort(ent - g_edicts);
+	gi.WriteByte(MZ_ROCKET | is_silenced);
+	gi.multicast(ent->s.origin, MULTICAST_PVS);
+
+	ent->client->ps.gunframe++;
+
+	PlayerNoise(ent, start, PNOISE_WEAPON);
+
+	if (!((int)dmflags->value & DF_INFINITE_AMMO))
+		ent->client->pers.inventory[ent->client->ammo_index] -= 12;
+}
+
+
+/*-------------------------------------------------------------------------------------------*/
 //BFG10K
 void weapon_bfg_fire(edict_t *ent)
 {
@@ -1164,56 +1266,51 @@ void weapon_bfg_fire(edict_t *ent)
 //Spartan laser
 void weapon_spartanlaser_fire(edict_t *ent)
 {
-	vec3_t	offset, start;
-	vec3_t	forward, right;
-	int		damage;
-	float	damage_radius = 20;
+	vec3_t		start;
+	vec3_t		forward, right;
+	vec3_t		offset;
+	int			damage;
+	int			kick;
 
 	if (deathmatch->value)
-		damage = 4;
-	else
-		damage = 4;
-
-	if (ent->client->ps.gunframe == 9)
-	{
-		// send muzzle flash
-		gi.WriteByte(svc_muzzleflash);
-		gi.WriteShort(ent - g_edicts);
-		gi.WriteByte(MZ_BFG | is_silenced);
-		gi.multicast(ent->s.origin, MULTICAST_PVS);
-
-		ent->client->ps.gunframe++;
-
-		PlayerNoise(ent, ent->s.origin, PNOISE_WEAPON);
-		return;
+	{	// normal damage is too extreme in dm
+		damage = 100;
+		kick = 200;
 	}
-
-	// cells can go down during windup (from power armor hits), so
-	// check again and abort firing if we don't have enough now
-	if (ent->client->pers.inventory[ent->client->ammo_index] < 50)
+	else
 	{
-		ent->client->ps.gunframe++;
-		return;
+		damage = 500;
+		kick = 500;
 	}
 
 	if (is_quad)
+	{
 		damage *= 4;
+		kick *= 4;
+	}
+
+	//Abort if not enough ammo
+	if (ent->client->pers.inventory[ent->client->ammo_index] < 50){
+		ent->client->ps.gunframe++;
+		return;
+	}
 
 	AngleVectors(ent->client->v_angle, forward, right, NULL);
 
-	VectorScale(forward, -2, ent->client->kick_origin);
+	VectorScale(forward, -3, ent->client->kick_origin);
+	ent->client->kick_angles[0] = -3;
 
-	// make a big pitch kick with an inverse fall
-	ent->client->v_dmg_pitch = -10;
-	ent->client->v_dmg_roll = crandom() * 8;
-	ent->client->v_dmg_time = level.time + DAMAGE_TIME;
-
-	VectorSet(offset, 8, 8, ent->viewheight - 8);
+	VectorSet(offset, 0, 7, ent->viewheight - 8);
 	P_ProjectSource(ent->client, ent->s.origin, offset, forward, right, start);
-	fire_bfg(ent, start, forward, damage, 2500, damage_radius);
+	fire_rail(ent, start, forward, damage, kick);
+
+	// send muzzle flash
+	gi.WriteByte(svc_muzzleflash);
+	gi.WriteShort(ent - g_edicts);
+	gi.WriteByte(MZ_RAILGUN | is_silenced);
+	gi.multicast(ent->s.origin, MULTICAST_PVS);
 
 	ent->client->ps.gunframe++;
-
 	PlayerNoise(ent, start, PNOISE_WEAPON);
 
 	if (!((int)dmflags->value & DF_INFINITE_AMMO))
@@ -1466,12 +1563,12 @@ BLASTER / HYPERBLASTER
 
 
 
-void Weapon_Blaster (edict_t *ent)
+void Weapon_Blaster (edict_t *ent) //Blaster to plasma pistol, just a really fast pistol
 {
 	static int	pause_frames[]	= {5, 6, 0}; //19, 32
 	static int	fire_frames[]	= {3, 0}; //5
 
-	Weapon_Generic (ent, 2, 4, 7, 10, pause_frames, fire_frames, Weapon_RocketLauncher_Fire); //4, 8, 52, 55
+	Weapon_Generic (ent, 2, 4, 7, 10, pause_frames, fire_frames, Weapon_Blaster_Fire); //4, 8, 52, 55
 }
 
 
@@ -1481,7 +1578,7 @@ void Weapon_HyperBlaster (edict_t *ent) //Hyper Blaster to DMR
 	static int	pause_frames[]	= {0};
 	static int	fire_frames[]	= {6, 0}; //6, 7, 8, 9, 10, 11, 0
 
-	Weapon_Generic (ent, 5, 10, 11, 15, pause_frames, fire_frames, Weapon_BR_Fire); //5, 20, 49, 53
+	Weapon_Generic (ent, 5, 10, 11, 15, pause_frames, fire_frames, Weapon_DMR_Fire); //5, 20, 49, 53
 }
 
 /*
@@ -1541,12 +1638,12 @@ void Weapon_Shotgun (edict_t *ent) //Shotgun to Needler rifle (?)
 
 
 
-void Weapon_SuperShotgun (edict_t *ent)
+void Weapon_SuperShotgun (edict_t *ent) //Super shotgun to halo railgun, basically an explosive railgun
 {
-	static int	pause_frames[]	= {29, 42, 57, 0};
-	static int	fire_frames[]	= {7, 0};
+	static int	pause_frames[]	= {35, 48, 63, 0}; //29, 42, 57, 0
+	static int	fire_frames[]	= {20, 0};
 
-	Weapon_Generic (ent, 6, 17, 57, 61, pause_frames, fire_frames, weapon_supershotgun_fire);
+	Weapon_Generic (ent, 6, 25, 63, 67, pause_frames, fire_frames, Weapon_HALORailgun_Fire);
 }
 
 
@@ -1585,8 +1682,7 @@ void Weapon_BFG (edict_t *ent)
 	static int	pause_frames[]	= {39, 45, 50, 55, 0};
 	static int	fire_frames[]	= {35, 0};//9, 17, 0
 
-	//Weapon_Generic (ent, 8, 32, 55, 58, pause_frames, fire_frames, weapon_spartanlaser_fire);
-	Weapon_Generic(ent, 8, 36, 55, 58, pause_frames, fire_frames, weapon_railgun_fire);
+	Weapon_Generic(ent, 8, 36, 55, 58, pause_frames, fire_frames, weapon_spartanlaser_fire);
 }
 
 
