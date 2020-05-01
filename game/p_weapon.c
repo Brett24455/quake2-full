@@ -656,7 +656,7 @@ void Weapon_Blaster_Fire(edict_t *ent)
 		damage = 15;
 	else
 		damage = 10;
-	Blaster_Fire(ent, vec3_origin, damage, false, EF_BLASTER);
+	Blaster_Fire(ent, vec3_origin, damage, false, EF_ROCKET);
 	ent->client->ps.gunframe++;
 }
 
@@ -1185,7 +1185,7 @@ void Weapon_HALORailgun_Fire(edict_t *ent)
 
 	VectorSet(offset, 8, 8, ent->viewheight - 8);
 	P_ProjectSource(ent->client, ent->s.origin, offset, forward, right, start);
-	fire_rocket(ent, start, forward, damage, 2000, damage_radius, radius_damage);
+	fire_halorailgun(ent, start, forward, damage, 2000, damage_radius, radius_damage);
 
 	// send muzzle flash
 	gi.WriteByte(svc_muzzleflash);

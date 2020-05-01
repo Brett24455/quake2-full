@@ -1587,6 +1587,14 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		return;
 	}
 
+	// MUCE:  Think for thrusting
+	if (ent->client->thrusting)
+		ApplyThrust(ent);
+
+	//Think for the thruster pack
+	if (ent->client->thrusterthrusting)
+		ApplyThrusterThrust(ent);
+
 	pm_passent = ent;
 
 	if (ent->client->chase_target) {

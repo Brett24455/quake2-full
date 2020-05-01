@@ -731,6 +731,7 @@ void fire_blaster (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int s
 void fire_grenade (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed, float timer, float damage_radius);
 void fire_grenade2 (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int speed, float timer, float damage_radius, qboolean held);
 void fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius, int radius_damage);
+void fire_hailorailgun(edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius, int radius_damage);
 void fire_rail (edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick);
 void fire_bfg (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius);
 
@@ -959,6 +960,16 @@ struct gclient_s
 
 	edict_t		*chase_target;		// player we are chasing
 	qboolean	update_chase;		// need to update chase info?
+
+	//Jetpack added from the tutorial at https://www.quakewiki.net/archives/qdevels/quake2/17_1_98.html
+	//Credit to MUCE where comments are in at g_local.h, g_cmds.c, and p_client.c
+	//Credit to MUCE fr jetpack.c
+	// MUCE: added for jetpack thrusting.
+	qboolean        thrusting;              // 1 on 0 off
+	float           next_thrust_sound;
+
+	//Thrust for the thruster pack
+	qboolean		thrusterthrusting;
 };
 
 
