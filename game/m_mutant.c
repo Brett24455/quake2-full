@@ -584,6 +584,8 @@ void mutant_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 			ThrowGib (self, "models/objects/gibs/sm_meat/tris.md2", damage, GIB_ORGANIC);
 		ThrowHead (self, "models/objects/gibs/head2/tris.md2", damage, GIB_ORGANIC);
 		self->deadflag = DEAD_DEAD;
+
+		SP_monster_parasite();
 		return;
 	}
 
@@ -599,6 +601,8 @@ void mutant_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 		self->monsterinfo.currentmove = &mutant_move_death1;
 	else
 		self->monsterinfo.currentmove = &mutant_move_death2;
+
+	SP_monster_parasite();
 }
 
 

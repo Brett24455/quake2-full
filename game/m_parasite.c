@@ -482,17 +482,23 @@ void parasite_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int dam
 			ThrowGib (self, "models/objects/gibs/sm_meat/tris.md2", damage, GIB_ORGANIC);
 		ThrowHead (self, "models/objects/gibs/head2/tris.md2", damage, GIB_ORGANIC);
 		self->deadflag = DEAD_DEAD;
+
+		SP_monster_gladiator();
 		return;
 	}
 
-	if (self->deadflag == DEAD_DEAD)
+	if (self->deadflag == DEAD_DEAD){
+		SP_monster_gladiator();
 		return;
+	}
 
 // regular death
 	gi.sound (self, CHAN_VOICE, sound_die, 1, ATTN_NORM, 0);
 	self->deadflag = DEAD_DEAD;
 	self->takedamage = DAMAGE_YES;
 	self->monsterinfo.currentmove = &parasite_move_death;
+
+	SP_monster_gladiator();
 }
 
 /*

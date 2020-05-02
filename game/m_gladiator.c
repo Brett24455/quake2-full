@@ -322,8 +322,9 @@ void gladiator_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int da
 		return;
 	}
 
-	if (self->deadflag == DEAD_DEAD)
+	if (self->deadflag == DEAD_DEAD){
 		return;
+	}
 
 // regular death
 	gi.sound (self, CHAN_VOICE, sound_die, 1, ATTN_NORM, 0);

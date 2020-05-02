@@ -951,6 +951,67 @@ void Cmd_ThrusterThrust_f(edict_t *ent)
 
 /*
 =================
+Cmd_StartRound_f
+=================
+*/
+void Cmd_StartRound_f(edict_t *ent){
+	edict_t *spot = ent;
+	spot = G_Spawn();
+
+	spot->s.origin[0] = 188 - 64;
+	spot->s.origin[1] = -164;
+	spot->s.origin[2] = 80;
+
+	spot->s.angles[1] = 90;
+	SP_monster_soldier_light(spot);
+}
+
+/*
+=================
+Cmd_ArmorLock_f
+=================
+*/
+void Cmd_ArmorLock_f(edict_t *ent)
+{
+	char    *string;
+
+	string = gi.args();
+
+	if (Q_stricmp(string, "on") == 0)
+	{
+		ent->client->alock = 1;
+		ent->client->next_thrust_sound = 0;
+	}
+	else
+	{
+		ent->client->alock = 0;
+	}
+}
+
+/*
+=================
+Cmd_RegenField_f
+=================
+*/
+void Cmd_RegenField_f(edict_t *ent)
+{
+	char    *string;
+
+	string = gi.args();
+
+	if (Q_stricmp(string, "on") == 0)
+	{
+		ent->client->regenlock = 1;
+		ent->client->next_thrust_sound = 0;
+	}
+	else
+	{
+		ent->client->regenlock = 0;
+	}
+}
+
+/*
+=================
 ClientCommand
 =================
 */
@@ -1040,6 +1101,14 @@ void ClientCommand (edict_t *ent)
 	//Thrust for the thruster pack
 	else if (Q_stricmp(cmd, "thrusterthrust") == 0)
 		Cmd_ThrusterThrust_f(ent);
+	//Armor Lock
+	else if (Q_stricmp(cmd, "armorlock") == 0)
+		Cmd_ArmorLock_f(ent);
+	//Regen Field
+	else if (Q_stricmp(cmd, "regenfield") == 0)
+		Cmd_RegenField_f(ent);
+	else if (Q_stricmp(cmd, "round") == 0)
+		Cmd_StartRound_f(ent);
 	else if (Q_stricmp(cmd, "playerlist") == 0)
 		Cmd_PlayerList_f(ent);
 	else	// anything that doesn't match a command will be a chat

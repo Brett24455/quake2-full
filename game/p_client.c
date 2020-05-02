@@ -1595,6 +1595,25 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	if (ent->client->thrusterthrusting)
 		ApplyThrusterThrust(ent);
 
+	//Think for armor lock
+	if (ent->client->alock){
+		//client->ps.pmove.pm_type = PM_FREEZE;
+		ArmorLock(ent);
+	}
+
+	//Think for regen field
+	if (ent->client->regenlock){
+		/*int regen_tic;
+		if (ent->health != 100){
+			while (regen_tic != 100){
+				regen_tic += 1;
+			}
+			regen_tic = 0;
+		}*/
+		RegenField(ent);
+	}
+		
+
 	pm_passent = ent;
 
 	if (ent->client->chase_target) {
@@ -1614,6 +1633,9 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			client->ps.pmove.pm_type = PM_GIB;
 		else if (ent->deadflag)
 			client->ps.pmove.pm_type = PM_DEAD;
+		//Added here to freeze the player in place if they use either of these two abilities
+		else if (ent->client->regenlock || ent->client->alock)
+			client->ps.pmove.pm_type = PM_FREEZE;
 		else
 			client->ps.pmove.pm_type = PM_NORMAL;
 

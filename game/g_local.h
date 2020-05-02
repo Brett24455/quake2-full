@@ -970,6 +970,10 @@ struct gclient_s
 
 	//Thrust for the thruster pack
 	qboolean		thrusterthrusting;
+
+	//Armor lock and regen
+	qboolean		alock;
+	qboolean		regenlock;
 };
 
 
