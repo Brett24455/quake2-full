@@ -40,6 +40,8 @@ static int	sound_idle;
 static int	sound_search;
 static int	sound_sight;
 
+extern int roundscore;
+
 
 void gladiator_idle (edict_t *self)
 {
@@ -319,6 +321,7 @@ void gladiator_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int da
 			ThrowGib (self, "models/objects/gibs/sm_meat/tris.md2", damage, GIB_ORGANIC);
 		ThrowHead (self, "models/objects/gibs/head2/tris.md2", damage, GIB_ORGANIC);
 		self->deadflag = DEAD_DEAD;
+
 		return;
 	}
 
@@ -332,6 +335,28 @@ void gladiator_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int da
 	self->takedamage = DAMAGE_YES;
 
 	self->monsterinfo.currentmove = &gladiator_move_death;
+	roundscore++;
+
+	/*
+	====================================================
+	Saving High Score
+	====================================================
+	*/
+	FILE * pFile;
+	FILE * rFile;
+
+	rFile = fopen("highestRound.txt", "r");
+
+	fscanf(rFile, "%d", &highscore);
+	fclose(rFile);
+
+	if (roundscore > highscore){
+		pFile = fopen("highestRound.txt", "w");
+
+		highscore = roundscore;
+		fprintf(pFile, "%d", highscore);
+		fclose(pFile);
+	}
 }
 
 
