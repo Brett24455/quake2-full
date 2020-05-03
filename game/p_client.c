@@ -1570,9 +1570,11 @@ usually be a couple times for each server frame.
 
 int lastregentime;
 int lastthrustertime;
+int lastlocktime;
 
 int regenseconds;
 int thrusterseconds;
+int lockseconds;
 
 void ClientThink(edict_t *ent, usercmd_t *ucmd)
 {
@@ -1613,8 +1615,14 @@ void ClientThink(edict_t *ent, usercmd_t *ucmd)
 
 	//Think for armor lock
 	if (ent->client->alock){
-		//client->ps.pmove.pm_type = PM_FREEZE;
-		ArmorLock(ent);
+		if (lockseconds == 0){
+			lockseconds = 10;
+			ArmorLock(ent);
+		}
+		else if (time(NULL) >= lastlocktime + 1 || time == 0){
+			lockseconds--;
+			lastlocktime = time(NULL);
+		}
 	}
 
 	//Think for regen field

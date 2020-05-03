@@ -14,7 +14,7 @@ void ApplyThrusterThrust(edict_t *ent)
 	vec3_t forward, right;
 	vec3_t pack_pos, jet_vector;
 
-	ent->velocity[0] = 1250;//((4000 - ent->velocity[0]) / 8);
+	ent->velocity[0] = 1250;
 
 	AngleVectors(ent->client->v_angle, forward, right, NULL);
 	VectorScale(forward, -7, pack_pos);

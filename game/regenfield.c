@@ -12,7 +12,7 @@ void RegenField(edict_t *ent)
 	vec3_t forward, right;
 	vec3_t pack_pos, jet_vector;
 
-	gi.cprintf(ent, PRINT_HIGH, "Regen Locked\n");
+	gi.cprintf(ent, PRINT_HIGH, "Regenerating!\n");
 	if (ent->health != 100){
 		if (ent->health == 99)
 			ent->health += 1;

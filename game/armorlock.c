@@ -12,7 +12,9 @@ void ArmorLock(edict_t *ent)
 	vec3_t forward, right;
 	vec3_t pack_pos, jet_vector;
 
-	gi.cprintf(ent, PRINT_HIGH, "Armor Locked\n");
+	gi.cprintf(ent, PRINT_HIGH, "Armor Locked!\n");
+
+	ent->client->invincible_framenum = level.framenum + 60;
 
 	//add sparks
 
