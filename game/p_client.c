@@ -1567,7 +1567,14 @@ This will be called once for each client frame, which will
 usually be a couple times for each server frame.
 ==============
 */
-void ClientThink (edict_t *ent, usercmd_t *ucmd)
+
+int lastregentime;
+int lastthrustertime;
+
+int regenseconds;
+int thrusterseconds;
+
+void ClientThink(edict_t *ent, usercmd_t *ucmd)
 {
 	gclient_t	*client;
 	edict_t	*other;
@@ -1581,8 +1588,8 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	{
 		client->ps.pmove.pm_type = PM_FREEZE;
 		// can exit intermission after five seconds
-		if (level.time > level.intermissiontime + 5.0 
-			&& (ucmd->buttons & BUTTON_ANY) )
+		if (level.time > level.intermissiontime + 5.0
+			&& (ucmd->buttons & BUTTON_ANY))
 			level.exitintermission = true;
 		return;
 	}
@@ -1592,8 +1599,17 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		ApplyThrust(ent);
 
 	//Think for the thruster pack
-	if (ent->client->thrusterthrusting)
-		ApplyThrusterThrust(ent);
+	if (ent->client->thrusterthrusting){
+		if (thrusterseconds == 0){
+			thrusterseconds = 4;
+			ApplyThrusterThrust(ent);
+		}
+		else if (time(NULL) >= lastthrustertime + 1 || time == 0){
+			thrusterseconds--;
+			lastthrustertime = time(NULL);
+		}
+		
+	}
 
 	//Think for armor lock
 	if (ent->client->alock){
@@ -1603,15 +1619,16 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 	//Think for regen field
 	if (ent->client->regenlock){
-		/*int regen_tic;
-		if (ent->health != 100){
-			while (regen_tic != 100){
-				regen_tic += 1;
-			}
-			regen_tic = 0;
-		}*/
-		RegenField(ent);
+		if (regenseconds == 0){
+			regenseconds = 1;
+			RegenField(ent);
+		}
+		else if (time(NULL) >= lastregentime + 1 || time == 0){
+			regenseconds--;
+			lastregentime = time(NULL);
+		}
 	}
+	
 		
 
 	pm_passent = ent;
