@@ -11,6 +11,9 @@ To add thrusting velocity to player
 =================
 */
 
+//Brett: Again, credit to MUCE for his jetpack tutorial,
+//it was absolutely essential to the rest of my mod and 
+//helped me to get a feel for modding in Quake 2
 void ApplyThrust(edict_t *ent)
 {
 
