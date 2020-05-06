@@ -555,7 +555,48 @@ void MegaHealth_think (edict_t *self)
 
 qboolean Pickup_Health (edict_t *ent, edict_t *other)
 {
-	if (!(ent->style & HEALTH_IGNORE_MAX))
+	//gitem_t *it;
+	//edict_t *it_ent;
+
+	//For testing purposes
+	//other == the client
+	//other->client->invincible_framenum = level.framenum + 40;
+
+	int pickupItem = (rand() % (100 - 0 + 1));
+	gi.cprintf(other, PRINT_HIGH, "%d ", pickupItem);
+
+	if (pickupItem > 75){
+		hasarmorlock = 1;
+		gi.cprintf(other, PRINT_HIGH, "Got Armor Lock!\n");
+	}
+	else if(pickupItem > 50){
+		hasregenfield = 1;
+		gi.cprintf(other, PRINT_HIGH, "Got Regen Field!\n");
+	}
+	else if (pickupItem > 25){
+		hasthrusterpack = 1;
+		gi.cprintf(other, PRINT_HIGH, "Got Thruster Pack!\n");
+	}
+	else{
+		hasjetpack = 1;
+		gi.cprintf(other, PRINT_HIGH, "Got Jetpack!\n");
+	}
+
+	/*it = FindItem("BFG");
+	it_ent = G_Spawn();
+	it_ent->classname = it->classname;
+	SpawnItem(it_ent, it);
+	Touch_Item(it_ent, ent, NULL, NULL);
+	if (it_ent->inuse)
+		G_FreeEdict(it_ent);
+	gi.cprintf(other, PRINT_HIGH, "Got Spartan Laser!\n");*/
+
+
+
+
+
+
+	/*if (!(ent->style & HEALTH_IGNORE_MAX))
 		if (other->health >= other->max_health)
 			return false;
 
@@ -580,7 +621,7 @@ qboolean Pickup_Health (edict_t *ent, edict_t *other)
 	{
 		if (!(ent->spawnflags & DROPPED_ITEM) && (deathmatch->value))
 			SetRespawn (ent, 30);
-	}
+	}*/
 
 	return true;
 }

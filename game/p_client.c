@@ -1616,7 +1616,7 @@ void ClientThink(edict_t *ent, usercmd_t *ucmd)
 	//Think for armor lock
 	if (ent->client->alock){
 		if (lockseconds == 0){
-			lockseconds = 10;
+			lockseconds = 8;
 			ArmorLock(ent);
 		}
 		else if (time(NULL) >= lastlocktime + 1 || time == 0){

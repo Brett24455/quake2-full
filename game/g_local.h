@@ -461,8 +461,14 @@ extern	int	snd_fry;
 extern	int	jacket_armor_index;
 extern	int	combat_armor_index;
 extern	int	body_armor_index;
+
 int roundscore; //Used for the fire fight mod to keep track of how many rounds completed
 int highscore;
+
+qboolean hasarmorlock;
+qboolean hasregenfield;
+qboolean hasthrusterpack;
+qboolean hasjetpack;
 
 
 // means of death

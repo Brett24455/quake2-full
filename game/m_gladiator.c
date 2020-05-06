@@ -337,6 +337,7 @@ void gladiator_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int da
 	self->monsterinfo.currentmove = &gladiator_move_death;
 	roundscore++;
 
+	SP_item_health_small(self);
 	/*
 	====================================================
 	Saving High Score
