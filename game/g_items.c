@@ -562,39 +562,99 @@ qboolean Pickup_Health (edict_t *ent, edict_t *other)
 	//other == the client
 	//other->client->invincible_framenum = level.framenum + 40;
 
-	int pickupItem = (rand() % (100 - 0 + 1));
-	gi.cprintf(other, PRINT_HIGH, "%d ", pickupItem);
+	/*Leaving documentation here for the indexing of weapons and
+	ammo for the players inventory.*/
 
-	if (pickupItem > 75){
+	/*other->client->pers.inventory[8] = 5; //Shotgun
+	other->client->pers.inventory[9] = 5; //SS
+	other->client->pers.inventory[10] = 5; //MG
+	other->client->pers.inventory[11] = 5; //CG
+	other->client->pers.inventory[12] = 5; //Grenades
+	other->client->pers.inventory[13] = 5; //Grenade Launcher
+	other->client->pers.inventory[14] = 5; //RL
+	other->client->pers.inventory[15] = 5; //HB
+	other->client->pers.inventory[16] = 5; //RG
+	other->client->pers.inventory[17] = 5; //BFG
+	other->client->pers.inventory[18] = 50; //Shells
+	other->client->pers.inventory[19] = 50; //Bullets
+	other->client->pers.inventory[20] = 100; //Cells
+	other->client->pers.inventory[21] = 12; //Rockets
+	other->client->pers.inventory[22] = 16; //RG Slugs*/
+
+	int pickupItem = (rand() % (100 - 0 + 1));
+	//gi.cprintf(other, PRINT_HIGH, "%d ", pickupItem);
+
+	//Randomly generated rolls through this shitty if else structure
+	if (pickupItem > 90){
 		hasarmorlock = 1;
 		gi.cprintf(other, PRINT_HIGH, "Got Armor Lock!\n");
 	}
-	else if(pickupItem > 50){
+	else if(pickupItem > 80){
 		hasregenfield = 1;
 		gi.cprintf(other, PRINT_HIGH, "Got Regen Field!\n");
 	}
-	else if (pickupItem > 25){
+	else if (pickupItem > 70){
 		hasthrusterpack = 1;
 		gi.cprintf(other, PRINT_HIGH, "Got Thruster Pack!\n");
 	}
-	else{
+	else if (pickupItem > 60){
 		hasjetpack = 1;
 		gi.cprintf(other, PRINT_HIGH, "Got Jetpack!\n");
 	}
+	else if (pickupItem > 55){
+		other->client->pers.inventory[17] = 1; //BFG
+		other->client->pers.inventory[20] = 50;
 
-	/*it = FindItem("BFG");
-	it_ent = G_Spawn();
-	it_ent->classname = it->classname;
-	SpawnItem(it_ent, it);
-	Touch_Item(it_ent, ent, NULL, NULL);
-	if (it_ent->inuse)
-		G_FreeEdict(it_ent);
-	gi.cprintf(other, PRINT_HIGH, "Got Spartan Laser!\n");*/
+		gi.cprintf(other, PRINT_HIGH, "Got Spartan Laser!\n");
+	}
+	else if (pickupItem > 50){
+		other->client->pers.inventory[16] = 1; //HB
+		other->client->pers.inventory[22] = 10;
 
+		gi.cprintf(other, PRINT_HIGH, "Got Rocket Launcher!\n");
+	}
+	else if (pickupItem > 40){
+		other->client->pers.inventory[15] = 1; //HB
+		other->client->pers.inventory[20] = 100;
 
+		gi.cprintf(other, PRINT_HIGH, "Got DMR!\n");
+	}
+	else if (pickupItem > 35){
+		other->client->pers.inventory[14] = 1; //RL
+		other->client->pers.inventory[21] = 12;
 
+		gi.cprintf(other, PRINT_HIGH, "Got Plasma Launcher!\n");
+	}
+	else if (pickupItem > 30){
+		other->client->pers.inventory[13] = 1; //Grenade Launcher
+		other->client->pers.inventory[12] = 25;
 
+		gi.cprintf(other, PRINT_HIGH, "Got Fuel Rod Cannon!\n");
+	}
+	else if (pickupItem > 20){
+		other->client->pers.inventory[11] = 1; //Chain Gun
+		other->client->pers.inventory[19] = 100;
 
+		gi.cprintf(other, PRINT_HIGH, "Got Battle Rifle!\n");
+	}
+	else if (pickupItem > 10){
+		other->client->pers.inventory[10] = 5; //Machine Gun
+		other->client->pers.inventory[19] = 70;
+
+		gi.cprintf(other, PRINT_HIGH, "Got Needler!\n");
+	}
+	else if (pickupItem > 5){
+		other->client->pers.inventory[9] = 5; //Super Shotgun
+		other->client->pers.inventory[18] = 20;
+
+		gi.cprintf(other, PRINT_HIGH, "Got Rail Gun (Halo)!\n");
+	}
+	else{
+		other->client->pers.inventory[8] = 5; //Shotgun
+		other->client->pers.inventory[18] = 30;
+
+		gi.cprintf(other, PRINT_HIGH, "Got Needler Rifle!\n");
+	}
 
 	/*if (!(ent->style & HEALTH_IGNORE_MAX))
 		if (other->health >= other->max_health)

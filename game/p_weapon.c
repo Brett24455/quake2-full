@@ -624,9 +624,6 @@ void Blaster_Fire(edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, int
 	vec3_t	start;
 	vec3_t	offset;
 
-	gi.cprintf(ent, PRINT_HIGH, "%i", roundscore);
-	gi.cprintf(ent, PRINT_HIGH, "\n");
-
 	if (is_quad)
 		damage *= 4;
 	AngleVectors(ent->client->v_angle, forward, right, NULL);
