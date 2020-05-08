@@ -603,55 +603,55 @@ qboolean Pickup_Health (edict_t *ent, edict_t *other)
 	}
 	else if (pickupItem > 55){
 		other->client->pers.inventory[17] = 1; //BFG
-		other->client->pers.inventory[20] = 50;
+		other->client->pers.inventory[20] += 50;
 
 		gi.cprintf(other, PRINT_HIGH, "Got Spartan Laser!\n");
 	}
 	else if (pickupItem > 50){
 		other->client->pers.inventory[16] = 1; //HB
-		other->client->pers.inventory[22] = 10;
+		other->client->pers.inventory[22] += 10;
 
 		gi.cprintf(other, PRINT_HIGH, "Got Rocket Launcher!\n");
 	}
 	else if (pickupItem > 40){
 		other->client->pers.inventory[15] = 1; //HB
-		other->client->pers.inventory[20] = 100;
+		other->client->pers.inventory[20] += 100;
 
 		gi.cprintf(other, PRINT_HIGH, "Got DMR!\n");
 	}
 	else if (pickupItem > 35){
 		other->client->pers.inventory[14] = 1; //RL
-		other->client->pers.inventory[21] = 12;
+		other->client->pers.inventory[21] += 12;
 
 		gi.cprintf(other, PRINT_HIGH, "Got Plasma Launcher!\n");
 	}
 	else if (pickupItem > 30){
 		other->client->pers.inventory[13] = 1; //Grenade Launcher
-		other->client->pers.inventory[12] = 25;
+		other->client->pers.inventory[12] += 25;
 
 		gi.cprintf(other, PRINT_HIGH, "Got Fuel Rod Cannon!\n");
 	}
 	else if (pickupItem > 20){
 		other->client->pers.inventory[11] = 1; //Chain Gun
-		other->client->pers.inventory[19] = 100;
+		other->client->pers.inventory[19] += 100;
 
 		gi.cprintf(other, PRINT_HIGH, "Got Battle Rifle!\n");
 	}
 	else if (pickupItem > 10){
-		other->client->pers.inventory[10] = 5; //Machine Gun
-		other->client->pers.inventory[19] = 70;
+		other->client->pers.inventory[10] = 1; //Machine Gun
+		other->client->pers.inventory[19] += 70;
 
 		gi.cprintf(other, PRINT_HIGH, "Got Needler!\n");
 	}
 	else if (pickupItem > 5){
-		other->client->pers.inventory[9] = 5; //Super Shotgun
-		other->client->pers.inventory[18] = 20;
+		other->client->pers.inventory[9] = 1; //Super Shotgun
+		other->client->pers.inventory[18] += 24;
 
 		gi.cprintf(other, PRINT_HIGH, "Got Rail Gun (Halo)!\n");
 	}
 	else{
-		other->client->pers.inventory[8] = 5; //Shotgun
-		other->client->pers.inventory[18] = 30;
+		other->client->pers.inventory[8] = 1; //Shotgun
+		other->client->pers.inventory[18] += 30;
 
 		gi.cprintf(other, PRINT_HIGH, "Got Needler Rifle!\n");
 	}
